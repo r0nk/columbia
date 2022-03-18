@@ -24,9 +24,7 @@ pdf_to_csv(){
 	pdftotext -layout $1 $tmpfile
 
 	registration_number=$(cat $tmpfile | grep -i Registro | grep -i nacional | grep -o "[0-9]*")
-
 	echo registration_number: $registration_number
-
 
 	product_name=$(cat $tmpfile | grep -i "descrip" -A 1 | grep -v "DESCRIP" |  grep -Eo "^[^(a-z|,)]*")
 	echo "product_name: $product_name"
