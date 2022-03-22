@@ -1,0 +1,10 @@
+get tag with regex
+fuzzy search
+regex realizer
+regex generator
+
+smart tables
+"nearby" selector
+
+
+"a tool to grab data from tags"

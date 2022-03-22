@@ -1,0 +1,19 @@
+#!/bin/bash
+
+filename=$1
+label_regex=$2
+value_regex=$3
+
+for ((i=0;i<10;i++));
+do
+	result="$(grep -B $i -A $i -Ei "$label_regex" $filename | grep -io "$value_regex" | head -n 1)"
+	if [ -n "$result" ] ;then
+		echo $result
+		break
+	fi
+done
+
+#grab data based on how 'close' it is to the match, both vertically and horizontally
+
+#TODO use relevant keywords to match more generic types
+

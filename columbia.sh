@@ -56,7 +56,7 @@ pdf_to_csv(){
 	printf "%s, " $reentry_interval
 	printf "%s, " $number_of_applications
 	printf "%s, " $application_interval
-	printf "%s, " $notes
+	printf "%s" $notes
 
 	printf "\n"
 

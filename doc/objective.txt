@@ -1,0 +1,2 @@
+* real goal is automated process of pdf -> csv
+* query by crop application
