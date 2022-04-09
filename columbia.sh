@@ -22,7 +22,7 @@ pdf_to_csv(){
 	tmpfile=$(mktemp)
 	pdftotext -layout $1 $tmpfile
 
-	registration_number=$(cat $tmpfile | grep -i Registro | grep -i nacional | grep -o "[0-9]*")
+	registration_number=$(cat $tmpfile | grep -i Registro | grep -Ei "(nacional|venta)." | grep -o "[0-9]*")
 
 	product_name=$(cat $tmpfile | grep -i "descrip" -A 1 | grep -v "DESCRIP" |  grep -Eo "^[^(a-z|,)]*")
 
@@ -35,6 +35,14 @@ pdf_to_csv(){
 	product_class=$(cat $tmpfile | grep -Eio "(insect|herb|fung)icida"| head -n 1)
 
 	formulation_type=$( cat $tmpfile | grep -i "tipo de formulac" | sed "s/.*://g")
+
+	#
+	#if [ "x$registration_number" = "x" ] ;
+	#then
+	#	echo $filename
+	#fi
+
+	#return
 
 	printf "%s, " $filename
 	printf "%s, " $registration_number
@@ -66,4 +74,5 @@ pdf_to_csv(){
 #header
 echo filename,registration_number,product_name,company_name,registration_holder,active_ingredient,product_class,formulation_type,crop,pests,application_type,application_timing,dose,dose_units,waiting_period,reentry_interval,number_of_applications,application_interval,notes
 
-for i in $(find -type f | grep -E "pdf$" ) ; do pdf_to_csv $i ; done
+export -f pdf_to_csv
+find -type f | grep -E "pdf$" | parallel pdf_to_csv {}
