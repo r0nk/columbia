@@ -24,17 +24,20 @@ pdf_to_csv(){
 
 	registration_number=$(cat $tmpfile | grep -i Registro | grep -Ei "(nacional|venta)." | grep -o "[0-9]*")
 
-	product_name=$(cat $tmpfile | grep -i "descrip" -A 1 | grep -v "DESCRIP" |  grep -Eo "^[^(a-z|,)]*")
+	#TODO get these 2 from the filename
+#	product_name=$(cat $tmpfile | grep -i "descrip" -A 1 | grep -v "DESCRIP" |  grep -Eo "^[^(a-z|,)]*")
 
-	company_name=$(echo $filename | tr '\/' ' ' | awk '{print $1}')
+#	company_name=$(echo $filename | tr '\/' ' ' | awk '{print $1}')
 
-	registration_holder=$( cat $tmpfile | grep -i registro | grep -i titular | sed "s/TITULAR DEL REGISTRO//g")
+#	registration_holder=$( cat $tmpfile | grep -i registro | grep -i titular | sed "s/TITULAR DEL REGISTRO//g")
 
-	active_ingredient=$( cat $tmpfile | grep -i "Ingrediente Activo:" | sed "s/Ingrediente Activo://g;")
+	active_ingredient=$( cat $tmpfile | grep -i "Ingrediente Activo:" | sed "s/Ingrediente Activo://g;" | tr -d ',' | tr -d ' ')
 
 	product_class=$(cat $tmpfile | grep -Eio "(insect|herb|fung)icida"| head -n 1)
 
-	formulation_type=$( cat $tmpfile | grep -i "tipo de formulac" | sed "s/.*://g")
+	formulation_type=$( cat $tmpfile | grep -i "tipo de formulac" | sed "s/.*://g" | sed "s/^[ ]*//g")
+
+	crop=$( cat $tmpfile | grep -i "Cultivo registrados" | sed "s/.*://g" | tr ',' '|' | tr -d ' ')
 
 	#
 	#if [ "x$registration_number" = "x" ] ;
@@ -49,12 +52,12 @@ pdf_to_csv(){
 	printf "%s, " $product_name
 	printf "%s, " $company_name
 	printf "%s, " $registration_holder
-	printf "%s, " $active_ingredient
+	printf "\"%s\" , " "$active_ingredient"
 	printf "%s, " $product_class
-	printf "%s, " $formulation_type
+	printf "%s, " "$formulation_type"
+	printf "%s, " "$crop"
 
 	#these are all TODO
-	printf "%s, " $crop
 	printf "%s, " $pests
 	printf "%s, " $application_type
 	printf "%s, " $application_timing
@@ -64,7 +67,9 @@ pdf_to_csv(){
 	printf "%s, " $reentry_interval
 	printf "%s, " $number_of_applications
 	printf "%s, " $application_interval
-	printf "%s" $notes
+	printf "%s, " $notes
+
+	printf "1" #whether or not this entry was automated
 
 	printf "\n"
 
@@ -72,7 +77,7 @@ pdf_to_csv(){
 }
 
 #header
-echo filename,registration_number,product_name,company_name,registration_holder,active_ingredient,product_class,formulation_type,crop,pests,application_type,application_timing,dose,dose_units,waiting_period,reentry_interval,number_of_applications,application_interval,notes
+echo filename,registration_number,product_name,company_name,registration_holder,active_ingredient,product_class,formulation_type,crop,pests,application_type,application_timing,dose,dose_units,waiting_period,reentry_interval,number_of_applications,application_interval,notes,automated
 
 export -f pdf_to_csv
 find -type f | grep -E "pdf$" | parallel pdf_to_csv {}

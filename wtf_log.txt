@@ -4,4 +4,6 @@ certain files in UPL appear to only have "venta" registration numbers, I'm not s
 ./Maestro.pdf
 both have the same number, 3077
 
+some have only images, the counts of words extracted are in text_counts.txt
 
+recognizing tables is inherently tricky.

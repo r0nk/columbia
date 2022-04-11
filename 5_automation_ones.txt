@@ -1,0 +1,5 @@
+./Agroser/FT-DUCLASE-GOLD.pdf
+./Invesa/FT-ESCORPION-SL.pdf
+./Agrocentro/CYCO.pdf
+./DVA/FT-LUFENURON-50-EC-DVA.pdf
+./UPL/Inhibit.pdf
