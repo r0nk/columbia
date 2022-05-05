@@ -2,6 +2,8 @@
 #convert textrated file to final csvs
 import json
 import os
+import re
+import sys
 
 def get_rows_columns_map(table_result, blocks_map):
     rows = {}
@@ -63,6 +65,7 @@ def get_table_csv_results(data):
 
     return csv
 
+
 def generate_table_csv(table_result, blocks_map, table_index):
     rows = get_rows_columns_map(table_result, blocks_map)
 
@@ -94,13 +97,32 @@ def all_text_blocks(data):
             ret.append(get_text(block,blocks_map))
     return ret
 
+def match_case_insensitive(text, pattern):
+    """
+    Returns a match if the pattern is contained in the text,
+    regardless of case, or None if there is no match.
+    """
+    return re.search(pattern, text, flags=re.IGNORECASE)
+
+def grab(label,value, data):
+    for d in data:
+        if match_case_insensitive(d,label):
+            return match_case_insensitive(d,value)
+
+def mine(data):
+    registration=grab("regi","[0-9]{2,4}",data)
+    if registration:
+        print(registration.group())
+#    else:
+#        print("REGISTRATION NUMBER NOT FOUND")
+#        sys.exit()
 
 directory = 'extracted/'
 for filename in os.listdir(directory):
     if filename.endswith(".json"):
         with open('extracted/'+filename, "r") as f:
-            print("filename:",filename)
+            print(filename,end=",")
             data = json.load(f)
-            print(all_text_blocks(data))
-            print(get_table_csv_results(data))
+            mine(all_text_blocks(data))
+#            print(get_table_csv_results(data))
 

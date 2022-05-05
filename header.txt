@@ -1,0 +1,19 @@
+Registration Number
+Product Name
+Company Name
+Registration Holder
+Active Ingredient
+Product Class
+Formulation type
+Crop
+Pests
+Application type
+Application timing
+Application methods
+Dose
+Dose Units
+Waiting period (days)
+Reentry interval (days)
+Number of applications
+Application interval (days)
+Notes

@@ -1,5 +1,9 @@
 #!/bin/bash
-bucket_name="asdf"
-aws textract start-document-analysis --document-location '{"S3Object":{"Bucket":"$bucket_name","Name":"columbia/Agrocentro/BUTACLOR-600-EC.pdf"}}' --feature-types '["TABLES","FORMS"]' | jq .JobId > jobid.txt
-aws textract get-document-analysis --job-id $(cat jobid.txt) > blockout.json
+filename="$1"
+out=$(echo $filename | sed "s/\//\-/g" | sed "s/pdf/json/g")
+jobid=$(aws textract start-document-analysis --document-location "{\"S3Object\":{\"Bucket\":\"sst3i-columbia\",\"Name\":\"$filename\"}}" --feature-types '["TABLES","FORMS"]' | jq .JobId | sed "s/\"//g")
+echo $out $jobid $(date -Im) starting... 
+sleep 120
+aws textract get-document-analysis --job-id $jobid > $out
+echo $out $jobid $(date -Im) DONE 
 
