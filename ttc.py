@@ -80,6 +80,20 @@ def generate_table_csv(table_result, blocks_map, table_index):
     csv += '\n\n\n'
     return csv
 
+def all_text_blocks(data):
+    blocks=data['Blocks']
+
+    blocks_map = {}
+    table_blocks = []
+    ret = []
+    for block in blocks:
+        blocks_map[block['Id']] = block
+
+    for block in blocks:
+        if block['BlockType'] == "LINE":
+            ret.append(get_text(block,blocks_map))
+    return ret
+
 
 directory = 'extracted/'
 for filename in os.listdir(directory):
@@ -87,5 +101,6 @@ for filename in os.listdir(directory):
         with open('extracted/'+filename, "r") as f:
             print("filename:",filename)
             data = json.load(f)
+            print(all_text_blocks(data))
             print(get_table_csv_results(data))
 
