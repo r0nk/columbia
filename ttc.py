@@ -107,12 +107,15 @@ def match_case_insensitive(text, pattern):
 def grab(label,value, data):
     for d in data:
         if match_case_insensitive(d,label):
-            return match_case_insensitive(d,value)
+            if match_case_insensitive(d,value):
+                return match_case_insensitive(d,value).group()
+    return ""
 
 def mine(data):
-    registration=grab("regi","[0-9]{2,4}",data)
-    if registration:
-        print(registration.group())
+    print(grab("regi","[0-9]{2,4}",data),end=",")
+    print(grab("(insect|herb|fung)icida","(insect|herb|fung)icida",data),end=",")
+
+    print("")
 #    else:
 #        print("REGISTRATION NUMBER NOT FOUND")
 #        sys.exit()
