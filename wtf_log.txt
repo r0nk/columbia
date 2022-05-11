@@ -7,3 +7,8 @@ both have the same number, 3077
 some have only images, the counts of words extracted are in text_counts.txt
 
 recognizing tables is inherently tricky.
+
+
+Wed May 11 10:57:33 AM CDT 2022
+sharda files appear to have no registration numbers, I couldn't find 
+them manually

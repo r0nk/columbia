@@ -44,7 +44,7 @@ def get_text(result, blocks_map):
     return text
 
 
-def get_table_csv_results(data):
+def all_table_blocks(data):
     # Get the text blocks
     blocks=data['Blocks']
 
@@ -58,29 +58,30 @@ def get_table_csv_results(data):
     if len(table_blocks) <= 0:
         return "<b> NO Table FOUND </b>"
 
-    csv = ''
+    tables = []
     for index, table in enumerate(table_blocks):
-        csv += generate_table_csv(table, blocks_map, index +1)
-        csv += '\n\n'
+        tables.append(get_table(table, blocks_map, index +1))
 
-    return csv
+    return tables
 
 
-def generate_table_csv(table_result, blocks_map, table_index):
+def get_table(table_result, blocks_map, table_index):
     rows = get_rows_columns_map(table_result, blocks_map)
 
     table_id = 'Table_' + str(table_index)
 
+    csv = []
+
     # get cells.
-    csv = 'Table: {0}\n\n'.format(table_id)
+#    csv = 'Table: {0}\n\n'.format(table_id)
 
+    row = ""
     for row_index, cols in rows.items():
-
         for col_index, text in cols.items():
-            csv += '{}'.format(text) + ","
-        csv += '\n'
+            row += "|" +text
+        csv.append(row)
+        row=""
 
-    csv += '\n\n\n'
     return csv
 
 def all_text_blocks(data):
@@ -104,28 +105,60 @@ def match_case_insensitive(text, pattern):
     """
     return re.search(pattern, text, flags=re.IGNORECASE)
 
-def grab(label,value, data):
+hits=0
+grab_misses=0
+value_misses=0
+def grab(label, value, data):
     for d in data:
         if match_case_insensitive(d,label):
             if match_case_insensitive(d,value):
+                global hits
+                hits+=1
                 return match_case_insensitive(d,value).group()
-    return ""
+            else:
+                global value_misses
+                value_misses+=1
+    global grab_misses
+    grab_misses+=1
+    return "MISSING"
+
+def pd(label,value,data):
+    print(grab(label,value,data),end=",")
 
 def mine(data):
-    print(grab("regi","[0-9]{2,4}",data),end=",")
-    print(grab("(insect|herb|fung)icida","(insect|herb|fung)icida",data),end=",")
+    pd("reg(\.|i)","[0-9]{2,4}",data) #registration number
+    pd("(insect|herb|fung)icida","(insect|herb|fung)icida",data) #Product Class
+#Registration Holder
+    pd("Ingrediente Activo:",".*",data) #Active Ingredient
+    pd("tipo de formulac",".*",data) #Formulation type
+    pd("Cultivo registrados",".*",data) #Crop
+#Pests
+#Application type
+#Application timing
+#Application methods
+#Dose
+#Dose Units
+#Waiting period (days)
+#Reentry interval (days)
+#Number of applications
+#Application interval (days)
+#Notes
 
     print("")
-#    else:
-#        print("REGISTRATION NUMBER NOT FOUND")
-#        sys.exit()
 
-directory = 'extracted/'
+directory = '/tmp/extracted/'
 for filename in os.listdir(directory):
     if filename.endswith(".json"):
-        with open('extracted/'+filename, "r") as f:
+        with open(directory+filename, "r") as f:
             print(filename,end=",")
-            data = json.load(f)
-            mine(all_text_blocks(data))
-#            print(get_table_csv_results(data))
+            j = json.load(f)
+            data = all_text_blocks(j)
+            for t in all_table_blocks(j):
+                data+=t
+            mine(data)
+#            sys.exit(1)
+
+print("Hits:",hits)
+print("Grab misses:",grab_misses)
+print("Value misses:",value_misses)
 
