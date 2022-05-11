@@ -128,10 +128,10 @@ def pd(label,value,data):
 def mine(data):
     pd("reg(\.|i)","[0-9]{2,4}",data) #registration number
     pd("(insect|herb|fung)icida","(insect|herb|fung)icida",data) #Product Class
-#Registration Holder
     pd("Ingrediente Activo:",".*",data) #Active Ingredient
     pd("tipo de formulac",".*",data) #Formulation type
     pd("Cultivo registrados",".*",data) #Crop
+# VVV These are all form tables probably VVV
 #Pests
 #Application type
 #Application timing
@@ -142,7 +142,6 @@ def mine(data):
 #Reentry interval (days)
 #Number of applications
 #Application interval (days)
-#Notes
 
     print("")
 
